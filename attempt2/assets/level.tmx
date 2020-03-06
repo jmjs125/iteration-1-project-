@@ -1,7 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.2" tiledversion="1.2.4" orientation="orthogonal" renderorder="right-down" width="32" height="32" tilewidth="128" tileheight="128" infinite="0" nextlayerid="6" nextobjectid="6">
+<map version="1.2" tiledversion="1.2.4" orientation="orthogonal" renderorder="right-down" width="32" height="32" tilewidth="128" tileheight="128" infinite="0" nextlayerid="12" nextobjectid="33">
  <tileset firstgid="1" name="floor" tilewidth="128" tileheight="128" tilecount="128" columns="8">
   <image source="spritesheet_ground.png" width="1024" height="2048"/>
+ </tileset>
+ <tileset firstgid="129" name="spritesheet_tiles" tilewidth="128" tileheight="128" tilecount="128" columns="8">
+  <image source="spritesheet_tiles.png" width="1024" height="2048"/>
+ </tileset>
+ <tileset firstgid="257" name="spritesheet_items" tilewidth="128" tileheight="128" tilecount="32" columns="8">
+  <image source="spritesheet_items.png" width="1024" height="512"/>
  </tileset>
  <layer id="1" name="background" width="32" height="32" locked="1">
   <data encoding="csv">
@@ -40,7 +46,7 @@
 </data>
  </layer>
  <imagelayer id="4" name="image" locked="1" offsetx="-3302" offsety="-7212">
-  <image source="../../Untitled-1.png" width="9900" height="9900"/>
+  <image source="../../Untitled-1.png"/>
  </imagelayer>
  <layer id="2" name="floor" width="32" height="32">
   <data encoding="csv">
@@ -78,10 +84,17 @@
 2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2
 </data>
  </layer>
- <objectgroup id="3" name="objects">
+ <objectgroup id="9" name="objects" offsetx="55.3939" offsety="-17.0909">
   <object id="1" name="spawnpoint" type="spawnpoint" x="88" y="2635.03">
    <point/>
   </object>
-  <object id="3" name="enemy" type="enemyspawner" x="2404" y="2372" width="892" height="308"/>
+  <object id="3" name="enemy" type="enemyspawner" x="896" y="2452" width="3124" height="228"/>
+  <object id="15" name="door(g)" type="door" gid="220" x="92.6061" y="777.091" width="128" height="128"/>
+  <object id="16" name="door(b)" type="door" gid="220" x="3740.61" y="2697.09" width="128" height="128"/>
+  <object id="19" name="door(y)" type="door" gid="220" x="3892.61" y="389.091" width="128" height="128"/>
+  <object id="23" name="yblocker" type="blocker" gid="203" x="3894.61" y="390.09" width="128" height="202" visible="0"/>
+  <object id="25" name="bblocker" type="blocker" gid="227" x="3748.61" y="2713.09" width="128" height="179" visible="0"/>
+  <object id="28" name="gblocker" type="blocker" gid="219" x="96.6061" y="785.091" width="142" height="218" visible="0"/>
+  <object id="31" name="gkey" type="key" gid="261" x="368.606" y="2681.09" width="128" height="128" visible="0"/>
  </objectgroup>
 </map>

@@ -18,8 +18,10 @@ class FirstScene extends BaseScene {
 
             update() {
               super.update();
-              
-
+            
+             
             }
+       
+
 
         }
