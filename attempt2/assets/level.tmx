@@ -89,12 +89,29 @@
    <point/>
   </object>
   <object id="3" name="enemy" type="enemyspawner" x="896" y="2452" width="3124" height="228"/>
-  <object id="15" name="door(g)" type="door" gid="220" x="92.6061" y="777.091" width="128" height="128"/>
-  <object id="16" name="door(b)" type="door" gid="220" x="3740.61" y="2697.09" width="128" height="128"/>
-  <object id="19" name="door(y)" type="door" gid="220" x="3892.61" y="389.091" width="128" height="128"/>
-  <object id="23" name="yblocker" type="blocker" gid="203" x="3894.61" y="390.09" width="128" height="202" visible="0"/>
-  <object id="25" name="bblocker" type="blocker" gid="227" x="3748.61" y="2713.09" width="128" height="179" visible="0"/>
-  <object id="28" name="gblocker" type="blocker" gid="219" x="96.6061" y="785.091" width="142" height="218" visible="0"/>
-  <object id="31" name="gkey" type="key" gid="261" x="368.606" y="2681.09" width="128" height="128" visible="0"/>
+  <object id="15" name="door(g)" type="door" gid="220" x="92.6061" y="777.091" width="128" height="128">
+   <properties>
+    <property name="name" value="greendoor"/>
+   </properties>
+  </object>
+  <object id="16" name="door(b)" type="door" gid="220" x="3740.61" y="2697.09" width="128" height="128">
+   <properties>
+    <property name="name" value="bluedoor"/>
+   </properties>
+  </object>
+  <object id="19" name="door(y)" type="door" gid="220" x="3892.61" y="389.091" width="128" height="128">
+   <properties>
+    <property name="name" value="yellowdoor"/>
+   </properties>
+  </object>
+  <object id="23" name="yblocker" type="blocker" gid="203" x="3894.61" y="390.09" width="128" height="202"/>
+  <object id="25" name="bblocker" type="blocker" gid="227" x="3748.61" y="2713.09" width="128" height="179"/>
+  <object id="28" name="gblocker" type="blocker" gid="219" x="96.6061" y="785.091" width="142" height="218"/>
+  <object id="31" name="gkey" type="keys" gid="261" x="368.606" y="2681.09" width="128" height="128">
+   <properties>
+    <property name="haskey" type="bool" value="false"/>
+    <property name="name" value="keys"/>
+   </properties>
+  </object>
  </objectgroup>
 </map>
