@@ -6,7 +6,7 @@ class BaseScene extends Phaser.Scene {
     blocks = [];
     keys;
     haskey = false;
-
+    isDown = false;
 
     constructor(config, tilesetImageURL, tilemapURL, tilesetItemsURL) {
         super(config);
@@ -26,8 +26,10 @@ class BaseScene extends Phaser.Scene {
         this.load.image('bblocker', 'assets/block_exported.png');
         this.load.image('yblocker', 'assets/ylock_exported.png');
         this.load.image('gblocker', 'assets/glock_exported.png');
-        this.load.image('keys', '/assets/greenkey.png');
-
+        this.load.image('greenkey', '/assets/greenkey.png');
+        this.load.image('left', 'assets/leftarrow.png');
+        this.load.image('right', 'assets/rightarrow.png');
+        this.load.image('up', 'assets/uparrow.png');
         this.load.spritesheet('player', 'assets/wizard.png', {
             frameWidth: 32,
             frameHeight: 32
@@ -49,7 +51,7 @@ class BaseScene extends Phaser.Scene {
         this.keys = this.physics.add.staticGroup();
         this.enemies = this.physics.add.group();
         this.doors = this.physics.add.staticGroup();
-        //this.block = this.physics.add.staticGroup();
+        this.blockers = this.physics.add.staticGroup();
 
 
         this.map.tileset = this.map.addTilesetImage('floor', 'tileset-image');
@@ -89,12 +91,12 @@ class BaseScene extends Phaser.Scene {
 
                 } else if (object.type === "keys") {
                     this.createkey(object);
-                    console.log(this.keys);
-
                 }
             }, this); //Set context for object layer
 
         }
+
+
         for (var i = 0; i < this.blocks.length; i++) {
             this.createblockers(this.blocks[i]);
 
@@ -114,7 +116,8 @@ class BaseScene extends Phaser.Scene {
         this.createCollision();
         this.cursors = this.input.keyboard.createCursorKeys()
 
-
+        this.movementButtons = {};
+        this.createButtons();
 
         this.anims.create({
             key: 'Left',
@@ -147,31 +150,36 @@ class BaseScene extends Phaser.Scene {
             frameRate: 10,
             repeat: -1
         })
-       
-      
 
+        //this.createbutton();
 
     }
 
     update() {
         //console.log(this.player);
-        if (this.cursors.right.isDown) {
+      
+        if (this.cursors.right.isDown || this.movementButtons.right.isDown) {
             this.player.setVelocityX(250);
             this.player.flipX = false;
             this.player.anims.play('Right', true)
-        } else if (this.cursors.left.isDown) {
+            this.isDown = true;
+        } else if (this.cursors.left.isDown|| this.movementButtons.left.isDown) {
             this.player.setVelocityX(-250);
             this.player.flipX = true;
             this.player.anims.play('Left', true);
+           
         } else {
             this.player.setVelocityX(0);
             this.player.anims.play('turn')
-        }
-
-        //Check for space bar press
+        } //Check for space bar press
         if (Phaser.Input.Keyboard.JustDown(this.cursors.space)) {
             this.player.setVelocityY(-500);
         }
+    
+
+
+
+       
 
 
     }
@@ -184,7 +192,7 @@ class BaseScene extends Phaser.Scene {
     }
     createblockers(object) {
 
-        let name = object.name;
+        /*let name = object.name;
 
 
         let block = this.add.sprite(object.x, object.y, name);
@@ -195,12 +203,15 @@ class BaseScene extends Phaser.Scene {
         //console.log(this.blocks);
 
 
-        this.physics.add.collider(this.player, block, this.colliderblock, null, this);
+        this.physics.add.collider(this.player, block, this.colliderblock, null, this);*/
 
+        var blocker = this.blockers.create(object.x, object.y, object.name);
+        blocker.colour = object.colour;
 
     }
     createkey(object) {
-        this.keys.create(object.x, object.y, 'keys');
+        var key = this.keys.create(object.x, object.y, object.colour + 'key');
+        key.colour = object.colour;
     }
 
 
@@ -226,7 +237,10 @@ class BaseScene extends Phaser.Scene {
         this.player = this.physics.add.sprite(object.x, object.y, 'player', 0);
         this.player.setCollideWorldBounds(true);
         this.player.setScale(1.5)
-        this.player.setDepth(2)
+        this.player.setDepth(2);
+        this.player.ownedKeys = {
+            green: false,
+        }
     }
 
 
@@ -241,34 +255,38 @@ class BaseScene extends Phaser.Scene {
         this.physics.add.collider(this.player, collisionLayer);
         this.physics.add.collider(this.enemies, collisionLayer);
         this.physics.add.collider(this.enemies, this.player, this.enemyattack, null, this);
-        this.physics.add.collider(this.player,this.keys,this.collidekey,null,this);
+        this.physics.add.collider(this.player, this.keys, this.collidekey, null, this);
+        this.physics.add.collider(this.player, this.blockers, this.colliderblock, null, this);
 
 
     }
-    colliderblock() {
-if(this.haskey == false ){
-          console.log("door is lock ")
-      }else if(this.haskey == true){
-          console.log("player has key ")
-      }
-         
-
-
-
+    colliderblock(player, blocker) {
+        if (this.player.ownedKeys[blocker.colour] == false) {
+            console.log("door is lock ")
+        } else if (this.player.ownedKeys[blocker.colour] == true) {
+            console.log("player has key ")
+        }
+        console.log(blocker);
     }
     collidedoor() {
-      
-      
+
+
 
     }
-    collidekey(){
-      this.haskey = true;
-      this.colliderblock();
-
-        
-
-        
+    collidekey(player, key) {
+        this.player.ownedKeys[key.colour] = true;
+        this.destroyBlock(key);
     }
+
+    destroyBlock(key) {
+        this.blockers.getChildren().forEach(function (blocker) {
+            if (blocker.colour === key.colour) {
+                blocker.destroy();
+            }
+        });
+
+    }
+
     enemyattack() {
         console.log("enemy hit you ");
     }
@@ -299,5 +317,46 @@ if(this.haskey == false ){
             ease: 'Sine.easeInOut'
         })
 
+    }
+
+    movement() {
+
+    }
+
+    createButtons() {
+        /*this.movementButtons.left = */
+        this.createButton(10, 2800, "left");
+        this.createButton(80, 2800, 'right');
+        this.createButton(500, 2800, "up");
+    
+
+
+    }
+
+    createButton(x, y, texture, callback) {
+        var button = this.add.sprite(x, y, texture);
+
+        //What is the default value for the button checking thing!
+
+        //Enable the button for listening for events!
+        button.setInteractive()
+
+        //Fire event when mouse is down on the sprite.
+        button.on('pointerdown', function(x,y,texture){
+                  console.log('this is working')
+                  this.isDown = true
+                  console.log(this.isDown);
+        })
+
+         
+    
+        //What does the event listener want to do?
+
+
+
+
+
+        this.movementButtons[texture] = button;
+        //return this.add.sprite(x, y, texture);
     }
 }

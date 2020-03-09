@@ -1,5 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.2" tiledversion="1.2.4" orientation="orthogonal" renderorder="right-down" width="32" height="32" tilewidth="128" tileheight="128" infinite="0" nextlayerid="12" nextobjectid="33">
+<map version="1.2" tiledversion="1.3.1" orientation="orthogonal" renderorder="right-down" compressionlevel="0" width="32" height="32" tilewidth="128" tileheight="128" infinite="0" nextlayerid="12" nextobjectid="33">
+ <editorsettings>
+  <export target="level.json" format="json"/>
+ </editorsettings>
  <tileset firstgid="1" name="floor" tilewidth="128" tileheight="128" tilecount="128" columns="8">
   <image source="spritesheet_ground.png" width="1024" height="2048"/>
  </tileset>
@@ -106,11 +109,15 @@
   </object>
   <object id="23" name="yblocker" type="blocker" gid="203" x="3894.61" y="390.09" width="128" height="202"/>
   <object id="25" name="bblocker" type="blocker" gid="227" x="3748.61" y="2713.09" width="128" height="179"/>
-  <object id="28" name="gblocker" type="blocker" gid="219" x="96.6061" y="785.091" width="142" height="218"/>
+  <object id="28" name="gblocker" type="blocker" gid="219" x="96.6061" y="785.091" width="142" height="218">
+   <properties>
+    <property name="colour" value="green"/>
+   </properties>
+  </object>
   <object id="31" name="gkey" type="keys" gid="261" x="368.606" y="2681.09" width="128" height="128">
    <properties>
+    <property name="colour" value="green"/>
     <property name="haskey" type="bool" value="false"/>
-    <property name="name" value="keys"/>
    </properties>
   </object>
  </objectgroup>
