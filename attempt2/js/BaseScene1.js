@@ -1,4 +1,7 @@
-class BaseScene extends Phaser.Scene {
+
+
+class BaseScene1 extends Phaser.Scene {
+
     cursors;
     enemies;
     player;
@@ -7,9 +10,11 @@ class BaseScene extends Phaser.Scene {
     keys;
     haskey = false;
     isDown = false;
+    doorlocked = true;
+    isjumping = false;
 
     constructor(config, tilesetImageURL, tilemapURL, tilesetItemsURL) {
-        super(config);
+        super("BaseScene1");
         this.tilesetImageURL = tilesetImageURL;
         this.tilemapURL = tilemapURL;
         this.tilesetItemsURL = tilesetImageURL;
@@ -53,7 +58,7 @@ class BaseScene extends Phaser.Scene {
         this.doors = this.physics.add.staticGroup();
         this.blockers = this.physics.add.staticGroup();
 
-
+        
         this.map.tileset = this.map.addTilesetImage('floor', 'tileset-image');
 
         this.physics.world.setBounds(0, 0, this.map.widthInPixels, this.map.heightInPixels);
@@ -92,6 +97,7 @@ class BaseScene extends Phaser.Scene {
                 } else if (object.type === "keys") {
                     this.createkey(object);
                 }
+
             }, this); //Set context for object layer
 
         }
@@ -112,12 +118,15 @@ class BaseScene extends Phaser.Scene {
         this.camera.startFollow(this.player);
         this.camera.setBounds(0, 0, this.map.widthInPixels, this.map.height * this.map.tileHeight);
         this.camera.zoom = 1;
+      
+      
 
         this.createCollision();
+       
         this.cursors = this.input.keyboard.createCursorKeys()
 
-        this.movementButtons = {};
-        this.createButtons();
+        
+       
 
         this.anims.create({
             key: 'Left',
@@ -152,34 +161,46 @@ class BaseScene extends Phaser.Scene {
         })
 
         //this.createbutton();
+        this.uiScene = this.scene.get('UIScene');
+        this.scene.launch(this.uiScene);
+       
 
     }
 
     update() {
-        //console.log(this.player);
-      
-        if (this.cursors.right.isDown || this.movementButtons.right.isDown) {
+        var movementButtons = this.scene.get("UIScene").movementButtons
+        console.log(movementButtons);
+        console.log(this.player);
+   
+         if (this.cursors.right.isDown || movementButtons.right.isDown) {
             this.player.setVelocityX(250);
-            this.player.flipX = false;
+         this.player.flipX = false;
             this.player.anims.play('Right', true)
             this.isDown = true;
-        } else if (this.cursors.left.isDown|| this.movementButtons.left.isDown) {
+         } else if (this.cursors.left.isDown || movementButtons.left.isDown) {
             this.player.setVelocityX(-250);
             this.player.flipX = true;
             this.player.anims.play('Left', true);
-           
-        } else {
+
+     } else {
             this.player.setVelocityX(0);
-            this.player.anims.play('turn')
-        } //Check for space bar press
-        if (Phaser.Input.Keyboard.JustDown(this.cursors.space)) {
+         this.player.anims.play('turn')
+         } 
+     if (Phaser.Input.Keyboard.JustDown(this.cursors.space)|| movementButtons.up.isDown) {
             this.player.setVelocityY(-500);
-        }
-    
-
-
+            this.isDown = true;
+          
+        } if (movementButtons.up.isDown = false){
+             this.player.setVelocityY(500);
+           
+         }
 
        
+
+
+
+
+
 
 
     }
@@ -192,19 +213,7 @@ class BaseScene extends Phaser.Scene {
     }
     createblockers(object) {
 
-        /*let name = object.name;
-
-
-        let block = this.add.sprite(object.x, object.y, name);
-        this.physics.add.existing(block);
-        block.body.allowGravity = false;
-        block.body.setImmovable(true);
-        //this.physics.add.existing(block);
-        //console.log(this.blocks);
-
-
-        this.physics.add.collider(this.player, block, this.colliderblock, null, this);*/
-
+       
         var blocker = this.blockers.create(object.x, object.y, object.name);
         blocker.colour = object.colour;
 
@@ -257,25 +266,44 @@ class BaseScene extends Phaser.Scene {
         this.physics.add.collider(this.enemies, this.player, this.enemyattack, null, this);
         this.physics.add.collider(this.player, this.keys, this.collidekey, null, this);
         this.physics.add.collider(this.player, this.blockers, this.colliderblock, null, this);
+        this.physics.add.collider(this.player,this.doors,this.opendoor, null,this);
 
 
     }
     colliderblock(player, blocker) {
         if (this.player.ownedKeys[blocker.colour] == false) {
-            console.log("door is lock ")
+            this.doorlocked = true;
         } else if (this.player.ownedKeys[blocker.colour] == true) {
             console.log("player has key ")
+            this.doorlocked = false;
+           
         }
         console.log(blocker);
+        
     }
-    collidedoor() {
-
-
+    opendoor(player,door){
+        if(this.doorlocked = true){
+            console.log("door is open")
+         }
+        
+    }
+    collidedoor(player,door) {
+        if(this.doorlocked = false){
+            console.log("door is locked find key ")
+        }
+     
+      
 
     }
     collidekey(player, key) {
         this.player.ownedKeys[key.colour] = true;
         this.destroyBlock(key);
+        if(this.keys.colour = this.player.ownedKeys[key.colour]){
+            key.destroy();
+            console.log(this.ownedKeys);
+        
+
+        }
     }
 
     destroyBlock(key) {
@@ -291,9 +319,7 @@ class BaseScene extends Phaser.Scene {
         console.log("enemy hit you ");
     }
     createEnemy(object) {
-        // //this.enemy = this.physics.add.sprite(object.x,object.y,'enemy',0);
-        // this.enemy.setCollideWorldBounds(true);
-        // this.enemy.setDepth(2)
+      
 
         let origin = {
             x: object.x,
@@ -323,12 +349,38 @@ class BaseScene extends Phaser.Scene {
 
     }
 
-    createButtons() {
-        /*this.movementButtons.left = */
-        this.createButton(10, 2800, "left");
+    test(){
+            
+        if (this.movementButtons.right.isDown ) {
+            this.player.setVelocityX(250);
+         this.player.flipX = false;
+            this.player.anims.play('Right', true)
+            this.isDown = true;
+         } else if (this.cursors.left.isDown || this.movementButtons.left.isDown) {
+            this.player.setVelocityX(-250);
+            this.player.flipX = true;
+            this.player.anims.play('Left', true);
+
+     } else {
+            this.player.setVelocityX(0);
+         this.player.anims.play('turn')
+         } 
+     if (Phaser.Input.Keyboard.JustDown(this.cursors.space)|| this.movementButtons.up.isDown) {
+            this.player.setVelocityY(-500);
+            this.isDown = true;
+          
+        } if (this.movementButtons.up.isDown = false){
+             this.player.setVelocityY(500);
+        
+         }
+    }
+
+    /*createButtons() {
+ 
+        this.createButton(20, 2800, "left");
         this.createButton(80, 2800, 'right');
         this.createButton(500, 2800, "up");
-    
+
 
 
     }
@@ -336,20 +388,27 @@ class BaseScene extends Phaser.Scene {
     createButton(x, y, texture, callback) {
         var button = this.add.sprite(x, y, texture);
 
-        //What is the default value for the button checking thing!
+       
 
-        //Enable the button for listening for events!
         button.setInteractive()
 
-        //Fire event when mouse is down on the sprite.
-        button.on('pointerdown', function(x,y,texture){
-                  console.log('this is working')
-                  this.isDown = true
-                  console.log(this.isDown);
+        
+        button.on('pointerdown', function (x, y, texture) {
+            console.log('this is working')
+            this.isDown = true;
+            console.log(this.isDown);
         })
 
-         
-    
+        button.on('pointerup', function (x, y, texture) {
+            this.isDown = false;
+        })
+
+        button.on('pointermove', function(x,y,texture){
+            this.isDown = false;
+        })
+        
+
+
         //What does the event listener want to do?
 
 
@@ -357,6 +416,69 @@ class BaseScene extends Phaser.Scene {
 
 
         this.movementButtons[texture] = button;
-        //return this.add.sprite(x, y, texture);
+        
+    }*/
+}
+class UIScene extends Phaser.Scene {
+    constructor() {
+        super('UIScene')
+        
+    
+    }
+    preload(){
+        this.load.image('left', 'assets/leftarrow.png');
+        this.load.image('right', 'assets/rightarrow.png');
+        this.load.image('up', 'assets/uparrow.png');
+    }
+    create(){
+        this.movementButtons = {};
+        this.createButtons()
+       
+    }
+    createButtons() {
+ 
+        this.createButton(20, 0, "left");
+        this.createButton(80, 0, 'right');
+        this.createButton(500, 0, "up");
+
+
+
+    }
+
+    createButton(x, y, texture, callback) {
+        var button = this.add.sprite(x, y, texture);
+       
+       
+      
+        button.setInteractive()
+
+        var scene = this;
+        button.on('pointerdown', function (x, y, texture) {
+            console.log('this is working')
+            this.isDown = true;
+            console.log(this.isDown);
+         //scene.scene.get("BaseScene1").test()
+        })
+
+        button.on('pointerup', function (x, y, texture) {
+           // scene.scene.get("BaseScene1").test()
+           
+        })
+
+        button.on('pointermove', function(x,y,texture){
+            this.isDown = false;
+           // scene.scene.get("BaseScene1").test()
+        })
+        
+
+
+        //What does the event listener want to do?
+    
+
+
+
+
+        this.movementButtons[texture] = button;
+        
     }
 }

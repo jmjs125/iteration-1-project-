@@ -1,4 +1,4 @@
-class FirstScene extends BaseScene {
+class FirstScene extends BaseScene1 {
 
         constructor(config) {
             super(config,'assets/spritesheet_ground.png','assets/level.json');
